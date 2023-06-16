@@ -53,12 +53,16 @@ namespace msh
         // -----> Setters <-----
         // To change permission to add new element to the array
         void set_permission(bool);
+        // To add one count to the object to have the object for one more upper scope
+        void add_count();
 
         // -----> Operators Overloading <-----
         // Assignment operator
         shared_vector &operator=(const shared_vector &);
         // Bracket(Index) operator
         T &operator[](size_t);
+        // Reference operator
+        T* operator&();
         // Dereference operator
         T &operator*() const;
         // Arrow operator
@@ -146,6 +150,13 @@ namespace msh
         *allowIndexOutOfBound = flag;
     }
 
+    // To add one count to the object to have the object for one more upper scope
+    template <typename T>
+    void shared_vector<T>::add_count()
+    {
+        ++(*_count);
+    }
+
     // -----> Operators Overloading <-----
     // Assignment operator
     template <typename T>
@@ -202,6 +213,13 @@ namespace msh
             LOG("Use emplace_back() function\nProgram terminated");
             exit(1);
         }
+    }
+
+    // Reference operator
+    template <typename T>
+    T* shared_vector<T>::operator&()
+    {
+        return _array;
     }
 
     // Dereference operator

@@ -1,4 +1,5 @@
 {
+    "terminal.integrated.fontFamily": "DejaVu Sans Mono for Powerline",
     "files.associations": {
         "memory": "cpp",
         "typeinfo": "cpp",
