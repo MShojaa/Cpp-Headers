@@ -18,8 +18,8 @@ namespace msh
     template <typename T>
     class array;
     // ----------------------------->     VECTOR     <-----------------------------
-    template <typename T>
-    class vector;
+    // template <typename T>
+    // class vector;
 
     // ----------------------------->     VECTOR     <-----------------------------
     template <typename T>
@@ -62,13 +62,17 @@ namespace msh
         void reserve(const size_t);
         // Remove last element
         void pop();
+        // Reset size
+        void reset_size();
+        // Reset to nullptr
+        void reset();
     private:
         // Reallocate block of memory
         void realloc(const size_t);
         // Copy elements
         void copy_elements(T *const);
         // Shrink capacity to size and release extra memory
-        void shrink_to_fit();
+        // void shrink_to_fit();
     };
 
     // -----> Constructors and Destructor <-----
@@ -155,6 +159,24 @@ namespace msh
     {
         --_size;
     }
+    // Reset size
+    template <typename T>
+    void vector<T>::reset_size()
+    {
+        _size  = 0;
+    }
+    // Reset to nullptr
+    template <typename T>
+    void vector<T>::reset()
+    {
+        if (_array)
+        {
+            delete[] _array;
+            _array = nullptr;
+        }
+        _size     = 0;
+        _capacity = 0;
+    }
     // Reallocate block of memory
     template <typename T>
     void vector<T>::realloc(const size_t _capacity)
@@ -179,12 +201,12 @@ namespace msh
             _array[i] = other_array[i];
     }
     // Shrink capacity to size and release extra memory
-    template <typename T>
-    void vector<T>::shrink_to_fit()
-    {
-        if (_size > 0 && _size < _capacity)
-            realloc(_size);
-    }
+    // template <typename T>
+    // void vector<T>::shrink_to_fit()
+    // {
+    //     if (_size > 0 && _size < _capacity)
+    //         realloc(_size);
+    // }
 
     // ----------------------------->     ARRAY     <-----------------------------
     template <typename T>
@@ -199,6 +221,7 @@ namespace msh
         // -----> Constructors and Destructor <-----
         // Default Constructor
         array() : _array(nullptr), _size(0) {}
+        array(const size_t _size) : _array(new T[_size]), _size(_size) {}
         // Destructor
         ~array();
 
