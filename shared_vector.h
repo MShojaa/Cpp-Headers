@@ -50,7 +50,7 @@ namespace msh
 
         // -----> Getters <-----
         // Get array
-        // T *get_array() const;
+        T *get_array() const;
         // Get count
         size_t use_count() const;
         // Get size
