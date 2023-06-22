@@ -230,7 +230,7 @@ namespace msh
 
         // -----> Operators Overloading <-----
         // Assignment Operator
-        array<T> &operator=(const vector<T> &);
+        array<T> &operator=(const vector<double> &other);
         // Bracket(Index) Operator
         T &operator[](size_t);
     };
@@ -254,9 +254,9 @@ namespace msh
     // -----> Operators Overloading <-----
     // Assignment Operator
     template <typename T>
-    array<T> &array<T>::operator=(const vector<T> &other)
+    array<T> &array<T>::operator=(const vector<double> &other)
     {
-        if (_array != other.get())
+        // if (_array != other.get())
         {
             if (_size != other.size())
             {
@@ -265,7 +265,9 @@ namespace msh
                     delete[] _array;
                 _array = new T[_size];
             }
-            std::memcpy(_array, other.get(), _size * sizeof(T));
+            // std::memcpy(_array, other.get(), _size * sizeof(T));
+            for (size_t i = 0; i < _size; ++i)
+                _array[i] = static_cast<T>(other.get()[i]);
         }
         return *this;
     }
