@@ -5,6 +5,7 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <tuple>
 #include "vector.h"
 
 #ifndef LOG
@@ -21,7 +22,7 @@ namespace msh
     {
     // ------------------->     Variables     <-------------------
     private:
-        std::string file_address;
+        // std::string file_address;
         msh::vector<msh::vector<T>> grid;
         size_t index;
 
@@ -31,80 +32,89 @@ namespace msh
         // Default Constructor
         IO() = default;
         // Constructor that set file_address
-        explicit IO(std::string &file_address) : file_address(file_address) {}
+        // explicit IO(std::string &file_address) : file_address(file_address) {}
         // Constructor that set file_address
-        explicit IO(const char *file_address) : file_address(file_address) {}
+        // explicit IO(const char *file_address) : file_address(file_address) {}
         // Destructor
-        // ~IO();
+        ~IO();
     private:
         // -----> Setters <-----
         // Set file address
-        void set_file_address(std::string &);
+        // void set_file_address(std::string &);
         // Set file address
-        void set_file_address(const char *);
+        // void set_file_address(const char *);
     public:
         // -----> Operators Overloading <-----
         // Assignment Operator
-        void operator=(std::string &);
-        void operator=(const char *);
+        // void operator=(std::string &);
+        // void operator=(const char *);
 
     // ------------------->   Other Methods   <-------------------
         // Read data from file
         template <typename... Args>
-        size_t read_file(Args&... args);
+        size_t read(std::string &, Args&...);
+        template <typename... Args>
+        void write(std::string &, Args&...);
+    private:
         // Release memory
         void reset();
+        // Reset size to zero not releasing memory
         void soft_reset();
-    private:
         // Variadic Template Assignment
-        // template <typename... Args>
-        // void variadic_assignment(msh::vector<msh::vector<T>>&, T&, Args&...);
+        void variadic_assignment(){}
         template <typename Arg, typename... Args>
         void variadic_assignment(Arg&, Args&...);
-        void variadic_assignment(){}
     };
+
+    // -----> Constructors and Destructor <-----
+    // Destructor
+    template <typename T>
+    IO<T>::~IO()
+    {
+        reset();
+    }
 
     // -----> Operators Overloading <-----
     // Assignment Operator
-    template <typename T>
-    void IO<T>::operator=(std::string &file_address)
-    {
-        set_file_address(file_address);
-    }
-    template <typename T>
-    void IO<T>::operator=(const char *file_address)
-    {
-        set_file_address(file_address);
-    }
+    // template <typename T>
+    // void IO<T>::operator=(std::string &file_address)
+    // {
+    //     set_file_address(file_address);
+    // }
+    // template <typename T>
+    // void IO<T>::operator=(const char *file_address)
+    // {
+    //     set_file_address(file_address);
+    // }
 
     // -----> Setters <-----
     // Set file address
-    template <typename T>
-    void IO<T>::set_file_address(std::string& file_address)
-    {
-        this->file_address = file_address;
-    }
-    // Set file address
-    template <typename T>
-    void IO<T>::set_file_address(const char *file_address)
-    {
-        this->file_address = file_address;
-    }
+    // template <typename T>
+    // void IO<T>::set_file_address(std::string& file_address)
+    // {
+    //     this->file_address = file_address;
+    // }
+    // // Set file address
+    // template <typename T>
+    // void IO<T>::set_file_address(const char *file_address)
+    // {
+    //     this->file_address = file_address;
+    // }
 
     // ------------------->   Other Methods   <-------------------
     // Read data from file
     template <typename T>
     template <typename... Args>
-    size_t IO<T>::read_file(Args&... args)
+    size_t IO<T>::read(std::string &file_address, Args&... args)
     {
         std::fstream File;
         File.open(file_address, std::ios::in);
         if (!File.is_open())
         {
-            std::cout << "Error opening the " << file_address << " file!" << std::endl;
+            std::cout << "Failed to open " << file_address << std::endl;
             exit(1);
         }
-        
+
         grid.reserve(8);
         std::string first_line;
         std::getline(File, first_line);
@@ -124,22 +134,43 @@ namespace msh
                 File >> grid[i][j];
             i = 0;
         }
+        File.close();
+
         if (grid[0].size() > grid[1].size())
             grid[0].pop();
 
-        for (size_t i = 0; i < grid.size(); ++i)
-        {
-            for (size_t j = 0; j < grid[i].size(); ++j)
-                Print(grid[i][j]);
-            LOG("");
-        }
         index = 0;
         variadic_assignment(args...);
 
         size_t size_of_array = grid[0].size();
-        soft_reset();
+        // soft_reset();
+        reset();
 
         return size_of_array;
+    }
+    // Write to file
+    template <typename T>
+    template <typename... Args>
+    void IO<T>::write(std::string &file_address, Args&... args)
+    {
+        std::fstream File;
+        File.open(file_address, std::ios::out);
+        if (!File.is_open())
+        {
+            std::cout << "Failed to open " << file_address << std::endl;
+            exit(1);
+        }
+
+        auto first_arg = std::get<0>(std::tuple<Args*...>(&args...));
+        size_t _size = first_arg->size();
+
+        for (size_t i = 0; i < _size; ++i)
+        {
+            int n = 0;
+            ((File << (n++ == 0 ? "" : " ") << args[i]), ...);
+            File << "\n";
+        }
+        File.close();
     }
     // Release memory
     template <typename T>

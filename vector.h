@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <cstring>
-#include <typeinfo>
 
 #ifndef LOG
 #define LOG(x) std::cout << x << std::endl
@@ -276,7 +275,7 @@ namespace msh
     {
         return _array[index];
     }
-    
+
 } // namespace msh
 
 #endif
